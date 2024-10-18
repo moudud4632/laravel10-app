@@ -1,6 +1,13 @@
 # Dockerfile
-FROM php:8.2-fpm
+# Use node for frontend dependencies installation
+FROM node:16-alpine as node_builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
 
+WORKDIR /root
+
+FROM php:8.2-fpm
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     zip unzip curl git libpng-dev libjpeg-dev libfreetype6-dev \
@@ -14,6 +21,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www
 
 # Copy the application code
+COPY --from=node_builder /app/node_modules ./node_modules
 COPY . .
 
 # Set file permissions
