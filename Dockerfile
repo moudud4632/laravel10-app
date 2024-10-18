@@ -1,24 +1,31 @@
+# Dockerfile
 FROM php:8.2-fpm
 
-# Install system dependencies and PHP extensions
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    zip unzip curl git libpng-dev libjpeg-dev libfreetype6-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql gd bcmath opcache
+    curl \
+    zip \
+    unzip \
+    git \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip
 
-# Install Composer globally
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# Set the working directory
 WORKDIR /var/www
 
-# Copy project files into container
+# Copy the application code
 COPY . .
 
-# Set correct permissions for Laravel
-RUN chown -R www-data:www-data /var/www
+# Set file permissions
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 755 /var/www/html/storage
 
-# Expose port 9000 for PHP-FPM
+# Expose port
 EXPOSE 9000
 
 # Start PHP-FPM server
