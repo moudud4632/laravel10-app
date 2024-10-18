@@ -18,7 +18,7 @@ COPY . .
 
 # Set file permissions
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/html/storage
+    && chmod -R 755 /var/www/storage
 
 # Expose port
 EXPOSE 9000
