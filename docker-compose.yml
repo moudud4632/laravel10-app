@@ -12,6 +12,15 @@ services:
     networks:
       - laravel10-network
 
+  node:
+    image: node:latest
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: bash -c "npm install && npm run build"
+    networks:
+      - laravel10-network
+
   nginx:
     image: nginx:latest
     container_name: laravel10-nginx
